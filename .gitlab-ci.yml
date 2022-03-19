@@ -1,0 +1,56 @@
+######################
+##       STAGE      ##
+######################
+stages:
+  - check
+  - build
+#  - deploy
+
+######################
+##   CHECK STAGE    ##
+######################
+lint:
+  stage: check
+  image: node:latest
+  script:
+    - npm install
+    - npm run eslint
+
+test-api:
+  stage: check
+  image: node:latest
+  script:
+    - npm install
+    - npm test
+
+e2e_tests:
+  stage: check
+  image: circleci/node:14.17.0-browsers
+  before_script:
+    - sudo npm ci
+    - sudo npm run build
+  script:
+    - npm run test-e2e
+
+######################
+##   BUILD STAGE    ##
+######################
+build:
+  stage: build
+  image: node:latest
+  script:
+    - npm install
+    - npm run build
+
+######################
+##   DEPLOY STAGE   ##
+######################
+#deploy:
+#  only:
+#    - master
+#  stage: deploy
+#  image: node:latest
+#  before_script:
+#    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+#  script:
+#    - bash deploy/deploy.sh
